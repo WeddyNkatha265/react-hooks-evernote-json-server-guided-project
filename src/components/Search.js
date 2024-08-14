@@ -1,9 +1,14 @@
 import React from "react";
 
-function Search() {
+function Search({ searchQuery, onSearchChange }) {
   return (
-    <div className="filter">
-      <input id="search-bar" type="text" placeholder="Search Notes" />
+    <div className="search">
+      <input
+        type="text"
+        placeholder="Search notes..."
+        value={searchQuery}
+        onChange={(e) => onSearchChange(e.target.value)}
+      />
     </div>
   );
 }

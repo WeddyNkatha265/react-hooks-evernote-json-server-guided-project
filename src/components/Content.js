@@ -1,24 +1,45 @@
-import React from "react";
-import NoteEditor from "./NoteEditor";
+import React, { useState } from "react";
 import NoteViewer from "./NoteViewer";
+import NoteEditor from "./NoteEditor";
 import Instructions from "./Instructions";
 
-/*
-  Advice: If you cannot figure out how to get this component to work,
-          move the div and getContent up into NoteContainer and
-          try to get it to work in the parent first.
-          Then complete the rest of your app before attempting to
-          refactor to get this Content component to work.
-*/
-function Content() {
+function Content({ note }) {
+  const [isEditing, setIsEditing] = useState(false);
+
+  const handleEdit = () => {
+    setIsEditing(true);
+  };
+
+  const handleSave = (updatedNote) => {
+    // Send PATCH request to update the note
+    fetch(`http://localhost:3000/notes/${updatedNote.id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+      },
+      body: JSON.stringify(updatedNote),
+    })
+      .then((response) => response.json())
+      .then(() => {
+        setIsEditing(false);
+      });
+  };
+
+  const handleCancel = () => {
+    setIsEditing(false);
+  };
+
   const getContent = () => {
-    if (false) {
-      return <NoteEditor />;
-    } else if (false) {
-      return <NoteViewer />;
-    } else {
+    if (!note) {
       return <Instructions />;
     }
+    if (isEditing) {
+      return (
+        <NoteEditor note={note} onSave={handleSave} onCancel={handleCancel} />
+      );
+    }
+    return <NoteViewer note={note} onEdit={handleEdit} />;
   };
 
   return <div className="master-detail-element detail">{getContent()}</div>;
